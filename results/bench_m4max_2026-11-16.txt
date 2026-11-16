@@ -1,0 +1,36 @@
+== Environment ==
+cpu: Apple M4 Max, logical cpus: 14, memory: 38654705664 bytes
+os: Darwin 27.0.0
+compiler: clang 21.0.0 (clang-2100.3.34.2), flags: -std=c++20 -O3 -DNDEBUG
+load average at start: 497.9 719.2 884.2
+steady_clock back-to-back delta: p50 0 ns, p99 42 ns, mean 13.7 ns (period 1/1000000000 s)
+
+== Workload (synthetic) ==
+seed 42, prefill 10000 passive orders (untimed), measured ops 5000000, tick range [0,65536), mid 32768
+mix: passive limit adds 3000680 (60.0%), cancels 1499273 (30.0%), market orders 250912 (5.0%), marketable limits 249135 (5.0%), modifies 0 (0.0%)
+ops that produced >=1 trade: 591899 (11.8%), trades: 1982654, resting orders: mean 19703, final 20033
+(generation took 0.72 s, not part of any measurement)
+cross-check engine vs reference: identical (1982654 trades, 81966477 shares)
+
+== Throughput (5 reps, wall clock over 5000000 ops, no per-op timing) ==
+rep 1: engine 28.35 M ops/s (cpu-time 28.57 M ops/s, 109 invol. ctx sw) | reference 10.86 M ops/s (cpu-time 10.90 M ops/s, 181 invol. ctx sw)
+rep 2: engine 31.33 M ops/s (cpu-time 31.39 M ops/s, 56 invol. ctx sw) | reference 11.35 M ops/s (cpu-time 11.39 M ops/s, 191 invol. ctx sw)
+rep 3: engine 29.27 M ops/s (cpu-time 29.41 M ops/s, 77 invol. ctx sw) | reference 11.02 M ops/s (cpu-time 11.04 M ops/s, 162 invol. ctx sw)
+rep 4: engine 32.61 M ops/s (cpu-time 32.66 M ops/s, 42 invol. ctx sw) | reference 12.00 M ops/s (cpu-time 12.03 M ops/s, 157 invol. ctx sw)
+rep 5: engine 32.73 M ops/s (cpu-time 32.80 M ops/s, 58 invol. ctx sw) | reference 11.81 M ops/s (cpu-time 11.88 M ops/s, 178 invol. ctx sw)
+SUMMARY engine:    median 31.33 M ops/s (min 28.35, max 32.73); mean 31.9 ns/op at median
+SUMMARY reference: median 11.35 M ops/s (min 10.86, max 12.00); mean 88.1 ns/op at median
+SUMMARY speedup (median/median): 2.76x
+
+== Latency (per-op steady_clock, includes timer overhead; 3 reps, medians reported) ==
+impl       op class                    count      p50      p90      p99     p99.9        max      mean
+engine     passive limit add         2908828     42ns     84ns    167ns     250ns    29125ns    54.7ns
+engine     cancel                    1499273     41ns     84ns    167ns     250ns    25875ns    39.7ns
+engine     marketable (traded)        591899     42ns     84ns    167ns     292ns    14875ns    49.4ns
+engine     all ops                   5000000     42ns     84ns    167ns     250ns    30000ns    49.6ns
+reference  passive limit add         2908828     83ns     84ns    166ns     209ns   104458ns    69.5ns
+reference  cancel                    1499273     83ns    125ns    250ns     375ns    25000ns    87.7ns
+reference  marketable (traded)        591899    125ns    291ns    458ns     709ns    34042ns   138.5ns
+reference  all ops                   5000000     83ns    125ns    292ns     459ns   405791ns    83.1ns
+
+load average at end: 448.4 701.3 876.0
